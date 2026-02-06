@@ -1,3 +1,4 @@
+/// Represents a job listing in the application
 class Job {
   final String id;
   final String title;
@@ -21,6 +22,7 @@ class Job {
     required this.color,
   });
 
+  /// Factory constructor to create a Job object from JSON data
   factory Job.fromJson(Map<String, dynamic> json) {
     return Job(
       id: json['_id'] ?? '',

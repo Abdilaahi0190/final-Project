@@ -13,36 +13,109 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Getting Auth and Job controllers
+    // Soo qaadashada controller-rada
     final AuthController authController = Get.find<AuthController>();
     final JobController jobController = Get.find<JobController>();
 
-    final userEmail = authController.email.value.isNotEmpty
-        ? authController.email.value
-        : 'User';
-    final userRole = authController.role.value;
+    // Soo qaadashada xogta isticmaalaha
+    String userEmail = authController.email.value;
+    String userRole = authController.role.value;
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      drawer: authController.role.value == 'admin'
-          ? _buildAdminDrawer(context)
-          : null,
+      // Doorashada dhinaca (Drawer)
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(color: Color(0xFF764ba2)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.white24,
+                    child: Icon(Icons.person, color: Colors.white, size: 30),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    userRole == 'admin' ? 'Qaybta Maamulka' : 'Shaqo Raadiye',
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Waxyaabaha u gaarka ah Shaqo Raadiyaha
+            if (userRole != 'admin') ...[
+              ListTile(
+                leading: const Icon(Icons.person_outline, color: Color(0xFF764ba2)),
+                title: Text('Profile-kayga', style: GoogleFonts.poppins()),
+                onTap: () {
+                  Navigator.pop(context);
+                  Get.toNamed('/profile');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.assignment_outlined, color: Color(0xFF764ba2)),
+                title: Text('Codsiyadayda', style: GoogleFonts.poppins()),
+                onTap: () {
+                  Navigator.pop(context);
+                  Get.toNamed('/my-applications');
+                },
+              ),
+            ],
+            // Waxyaabaha u gaarka ah Maamulka (Admin)
+            if (userRole == 'admin') ...[
+              ListTile(
+                leading: const Icon(Icons.work_outline, color: Color(0xFF764ba2)),
+                title: Text('Maareynta Shaqooyinka', style: GoogleFonts.poppins()),
+                onTap: () {
+                  Navigator.pop(context);
+                  Get.to(() => const AdminJobManagementScreen());
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.people_alt_outlined, color: Color(0xFF764ba2)),
+                title: Text('Maareynta Isticmaalayaasha', style: GoogleFonts.poppins()),
+                onTap: () {
+                  Navigator.pop(context);
+                  Get.to(() => const AdminUserManagementScreen());
+                },
+              ),
+            ],
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.red),
+              title: Text('Ka Bax', style: GoogleFonts.poppins(color: Colors.red)),
+              onTap: () {
+                Navigator.pop(context);
+                authController.logout();
+              },
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         title: Text(
-          'Job Portal App',
+          'ShaqoRaadi',
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.black87,
         actions: [
-          if (authController.role.value == 'admin')
-            Builder(
-              builder: (context) => IconButton(
-                icon: const Icon(Icons.menu_open, color: Color(0xFF764ba2)),
-                onPressed: () => Scaffold.of(context).openDrawer(),
-              ),
+          Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.menu_open, color: Color(0xFF764ba2)),
+              onPressed: () => Scaffold.of(context).openDrawer(),
             ),
+          ),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.redAccent),
             onPressed: () => authController.logout(),
@@ -56,35 +129,69 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top welcome section
-              _buildHeader(userEmail, userRole),
-
-              const SizedBox(height: 24),
-
-              // Jobs title
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // Qaybta sare (Header)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.only(left: 24, right: 24, bottom: 24, top: 10),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF764ba2),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(30),
+                    bottomRight: Radius.circular(30),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Text(
-                        'Latest Jobs',
-                        style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Maalin wanaagsan,',
+                          style: GoogleFonts.poppins(fontSize: 18, color: Colors.white70),
                         ),
-                        overflow: TextOverflow.ellipsis,
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.white24,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            userRole.toUpperCase(),
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      userEmail,
+                      style: GoogleFonts.poppins(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    TextButton(
-                      onPressed: () => Get.to(() => const AllJobsScreen()),
-                      child: Text(
-                        'See all',
-                        style: GoogleFonts.poppins(
-                          color: const Color(0xFF764ba2),
+                    const SizedBox(height: 20),
+                    // Meesha baaritaanka (Search Bar)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: TextField(
+                        onChanged: (value) => jobController.filterJobs(value),
+                        style: GoogleFonts.poppins(color: Colors.white),
+                        decoration: InputDecoration(
+                          icon: const Icon(Icons.search, color: Colors.white),
+                          hintText: 'Raadi shaqooyin...',
+                          hintStyle: GoogleFonts.poppins(color: Colors.white70),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                       ),
                     ),
@@ -92,7 +199,34 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
 
-              // Jobs list
+              const SizedBox(height: 24),
+
+              // Qaybta shaqooyinka ugu dambeeyay
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Shaqooyinkii u Dambeeyay',
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => Get.to(() => const AllJobsScreen()),
+                      child: Text(
+                        'Arag dhammaan',
+                        style: GoogleFonts.poppins(color: const Color(0xFF764ba2)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Liiska Shaqooyinka
               Obx(() {
                 if (jobController.isLoading.value) {
                   return const Center(
@@ -107,10 +241,7 @@ class HomeScreen extends StatelessWidget {
                   return Center(
                     child: Padding(
                       padding: const EdgeInsets.all(40),
-                      child: Text(
-                        'No jobs available',
-                        style: GoogleFonts.poppins(),
-                      ),
+                      child: Text('Ma jiraan shaqooyin banaan', style: GoogleFonts.poppins()),
                     ),
                   );
                 }
@@ -119,9 +250,9 @@ class HomeScreen extends StatelessWidget {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: jobController.jobs.length,
+                  itemCount: jobController.filteredJobs.length,
                   itemBuilder: (context, index) {
-                    final job = jobController.jobs[index];
+                    final job = jobController.filteredJobs[index];
                     return JobCard(job: job);
                   },
                 );
@@ -129,157 +260,6 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildAdminDrawer(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: const BoxDecoration(
-              color: Color(0xFF764ba2), // Solid Purple
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.white24,
-                  child: Icon(
-                    Icons.admin_panel_settings,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Admin Panel',
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.work_outline, color: Color(0xFF764ba2)),
-            title: Text('Manage Jobs', style: GoogleFonts.poppins()),
-            onTap: () {
-              Navigator.pop(context);
-              Get.to(() => const AdminJobManagementScreen());
-            },
-          ),
-          ListTile(
-            leading: const Icon(
-              Icons.people_alt_outlined,
-              color: Color(0xFF764ba2),
-            ),
-            title: Text(
-              'Manage Users',
-              style: GoogleFonts.poppins(),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              Get.to(() => const AdminUserManagementScreen());
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: Text(
-              'Logout',
-              style: GoogleFonts.poppins(color: Colors.red),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              Get.find<AuthController>().logout();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader(String email, String role) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.only(left: 24, right: 24, bottom: 24, top: 10),
-      decoration: const BoxDecoration(
-        color: Color(0xFF764ba2), // Solid Purple
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  'Good day,',
-                  style: GoogleFonts.poppins(fontSize: 18, color: Colors.white70),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white24,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  role.toUpperCase(),
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Text(
-            email,
-            style: GoogleFonts.poppins(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-          ),
-          const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.search, color: Colors.white),
-                const SizedBox(width: 10),
-                Text(
-                  'Search jobs...',
-                  style: GoogleFonts.poppins(color: Colors.white70),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

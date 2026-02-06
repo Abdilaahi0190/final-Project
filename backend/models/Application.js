@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 
+/**
+ * Application Schema - Records a user applying for a specific job
+ */
 const ApplicationSchema = new mongoose.Schema({
     job: {
         type: mongoose.Schema.Types.ObjectId,

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../controllers/job_controller.dart';
 import '../../models/job_model.dart';
 
+/// Admin-only screen for creating, editing, and deleting job postings
 class AdminJobManagementScreen extends StatelessWidget {
   const AdminJobManagementScreen({super.key});
 
@@ -28,7 +29,7 @@ class AdminJobManagementScreen extends StatelessWidget {
         if (jobController.jobs.isEmpty) {
           return Center(
             child: Text(
-              'No jobs available',
+              'No jobs available to manage',
               style: GoogleFonts.poppins(fontSize: 16),
             ),
           );
@@ -54,20 +55,20 @@ class AdminJobManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildJobTile(
-    BuildContext context,
-    Job job,
-    JobController controller,
-  ) {
+  /// Individual job list item with edit and delete actions
+  Widget _buildJobTile(BuildContext context, Job job, JobController controller) {
+    // Isticmaal midabka rasmiga ah (Primary Purple)
+    const Color primaryColor = Color(0xFF764ba2);
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: CircleAvatar(
-          backgroundColor: _parseColor(job.color),
-          child: const Icon(Icons.work, color: Colors.white),
+        leading: const CircleAvatar(
+          backgroundColor: primaryColor,
+          child: Icon(Icons.work, color: Colors.white),
         ),
         title: Text(
           job.title,
@@ -96,17 +97,12 @@ class AdminJobManagementScreen extends StatelessWidget {
     );
   }
 
-  void _showJobDialog(
-    BuildContext context,
-    JobController controller, {
-    Job? job,
-  }) {
+  /// Dialog for adding a new job or editing an existing one
+  void _showJobDialog(BuildContext context, JobController controller, {Job? job}) {
     final titleController = TextEditingController(text: job?.title);
     final companyController = TextEditingController(text: job?.company);
     final salaryController = TextEditingController(text: job?.salary);
-    final typeController = TextEditingController(
-      text: job?.type ?? 'Full-time',
-    );
+    final typeController = TextEditingController(text: job?.type ?? 'Full-time');
     final locationController = TextEditingController(text: job?.location);
     final descriptionController = TextEditingController(text: job?.description);
 
@@ -115,46 +111,26 @@ class AdminJobManagementScreen extends StatelessWidget {
       builder: (context) => AlertDialog(
         scrollable: true,
         title: Text(
-          job == null ? 'Add Job' : 'Edit Job',
+          job == null ? 'Ku dar Shaqo' : 'Wax ka beddel Shaqada',
           style: GoogleFonts.poppins(),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(labelText: 'Title'),
-            ),
-            TextField(
-              controller: companyController,
-              decoration: const InputDecoration(labelText: 'Company'),
-            ),
-            TextField(
-              controller: salaryController,
-              decoration: const InputDecoration(labelText: 'Salary'),
-            ),
-            TextField(
-              controller: typeController,
-              decoration: const InputDecoration(
-                labelText: 'Type (Full-time/Contract)',
-              ),
-            ),
-            TextField(
-              controller: locationController,
-              decoration: const InputDecoration(labelText: 'Location'),
-            ),
+            TextField(controller: titleController, decoration: const InputDecoration(labelText: 'Cinwaanka Shaqada')),
+            TextField(controller: companyController, decoration: const InputDecoration(labelText: 'Shirkadda')),
+            TextField(controller: salaryController, decoration: const InputDecoration(labelText: 'Mushaarka')),
+            TextField(controller: typeController, decoration: const InputDecoration(labelText: 'Nooca Shaqada')),
+            TextField(controller: locationController, decoration: const InputDecoration(labelText: 'Goobta')),
             TextField(
               controller: descriptionController,
-              decoration: const InputDecoration(labelText: 'Description'),
+              decoration: const InputDecoration(labelText: 'Faahfaahinta'),
               maxLines: 3,
             ),
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Jooji')),
           ElevatedButton(
             onPressed: () async {
               final jobData = {
@@ -165,7 +141,7 @@ class AdminJobManagementScreen extends StatelessWidget {
                 'location': locationController.text,
                 'description': descriptionController.text,
                 'logo': 'work',
-                'color': job?.color ?? '0xFF764ba2',
+                'color': '0xFF764ba2',
               };
 
               if (job == null) {
@@ -175,53 +151,31 @@ class AdminJobManagementScreen extends StatelessWidget {
               }
               if (context.mounted) Navigator.pop(context);
             },
-            child: const Text('Save'),
+            child: const Text('Keydi'),
           ),
         ],
       ),
     );
   }
 
-  void _confirmDelete(
-    BuildContext context,
-    JobController controller,
-    String jobId,
-  ) {
+  /// Delete confirmation dialog
+  void _confirmDelete(BuildContext context, JobController controller, String jobId) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Are you sure?'),
-        content: const Text('Are you sure you want to delete this job?'),
+        title: const Text('Ma tirtiraysaa?'),
+        content: const Text('Falkan dib looguma noqon karo. Ma hubtaa?'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('No'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Jooji')),
           TextButton(
             onPressed: () async {
               await controller.deleteJob(jobId);
               if (context.mounted) Navigator.pop(context);
             },
-            child: const Text(
-              'Yes, Delete',
-              style: TextStyle(color: Colors.red),
-            ),
+            child: const Text('Tirtir', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
     );
-  }
-
-  Color _parseColor(String colorStr) {
-    try {
-      if (colorStr.startsWith('0xFF')) {
-        return Color(int.parse(colorStr));
-      } else if (colorStr.startsWith('#')) {
-        return Color(int.parse(colorStr.replaceFirst('#', '0xFF')));
-      }
-      return const Color(0xFF764ba2);
-    } catch (e) {
-      return const Color(0xFF764ba2);
-    }
   }
 }

@@ -1,12 +1,8 @@
-// Login Screen
+// Shaashadda Soo Gelitaanka (Login)
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import '../../controllers/auth_controller.dart';
-import 'register_screen.dart';
-import 'widgets/auth_header.dart';
-import 'widgets/custom_button.dart';
-import 'widgets/custom_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,133 +12,132 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  // Controller-ada loogu talagalay in laga soo qaado qoraalka meelaha banaan
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  
+  // Qari ama tusi password-ka
   bool _obscurePassword = true;
 
-  // Use Get.find since it's initialized in main.dart
-  final AuthController authController = Get.find<AuthController>();
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    final error = await authController.login(
-      _emailController.text.trim(),
-      _passwordController.text,
-    );
-
-    if (error == null) {
-      Get.offAllNamed('/home');
-    } else {
-      Get.snackbar(
-        'Error',
-        error,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withValues(alpha: 0.7),
-        colorText: Colors.white,
-      );
-    }
-  }
+  // Soo qaadashada auth controller-ka
+  final AuthController _authController = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                   const AuthHeader(
-                      title: '', // Logo only in header for this design
-                      subtitle: '',
-                    ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Welcome Back! 👋',
-                    style: GoogleFonts.poppins(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF764ba2),
-                    ),
-                  ),
-                  Text(
-                    'Sign in to your account',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-                  CustomTextField(
-                    controller: _emailController,
-                    hintText: 'Email',
-                    icon: Icons.email_outlined,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Please enter your email';
-                      if (!value.contains('@')) return 'Email is incorrect';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  CustomTextField(
-                    controller: _passwordController,
-                    hintText: 'Password',
-                    icon: Icons.lock_outline,
-                    obscureText: _obscurePassword,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                        color: Colors.grey,
-                      ),
-                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Please enter your password';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 30),
-                  Obx(() => CustomButton(
-                    text: 'Sign In',
-                    isLoading: authController.isLoading.value,
-                    onPressed: _login,
-                  )),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+      body: Container(
+        // Qurxinta midabka asalka ah (Background gradient)
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(30.0),
+              child: Card(
+                elevation: 10,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
+                      // title text
                       Text(
-                        "Don't have an account? ",
-                        style: GoogleFonts.poppins(color: Colors.grey, fontSize: 15),
-                      ),
-                      GestureDetector(
-                        onTap: () => Get.to(() => const RegisterScreen()),
-                        child: Text(
-                          'Sign Up',
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                            color: const Color(0xFF764ba2),
-                          ),
+                        'Welcome Back',
+                        style: GoogleFonts.poppins(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF764ba2),
                         ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Login to your account',
+                        style: GoogleFonts.poppins(color: Colors.grey[600]),
+                      ),
+                      const SizedBox(height: 40),
+
+                      // Email Field
+                      TextField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          labelText: 'Email Address',
+                          prefixIcon: const Icon(Icons.email_outlined, color: Color(0xFF764ba2)),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Password Field
+                      TextField(
+                        controller: _passwordController,
+                        obscureText: _obscurePassword,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF764ba2)),
+                          suffixIcon: IconButton(
+                            icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                            onPressed: () {
+                              // toggle password visibility
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+
+                      // Login Button
+                      Obx(() => SizedBox(
+                        width: double.infinity,
+                        height: 55,
+                        child: ElevatedButton(
+                          onPressed: _authController.isLoading.value ? null : _handleLogin,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF764ba2),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                          ),
+                          child: _authController.isLoading.value
+                              ? const CircularProgressIndicator(color: Colors.white)
+                              : Text(
+                                  'LOGIN',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        ),
+                      )),
+                      const SizedBox(height: 20),
+
+                      // go to register page
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Don't have an account? ", style: GoogleFonts.poppins()),
+                          GestureDetector(
+                            onTap: () => Get.toNamed('/register'),
+                            child: Text(
+                              'Register',
+                              style: GoogleFonts.poppins(
+                                color: const Color(0xFF764ba2),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -151,5 +146,25 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  // Shaqada (Function) gacanta ku haysa soo gelitaanka
+  void _handleLogin() async {
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
 
+    // Hubi haddii meelaha banaan ay wax ka maqan yihiin
+    if (email.isEmpty || password.isEmpty) {
+      Get.snackbar('Khalad', 'Fadlan buuxi dhammaan meelaha banaan', backgroundColor: Colors.red[100]);
+      return;
+    }
+
+    // Ka wac login controller-ka
+    final error = await _authController.login(email, password);
+    if (error == null) {
+      // Guul!
+      Get.offAllNamed('/home');
+    } else {
+      // Tus farriinta khaladka
+      Get.snackbar('Soo Gelitaanku waa Fashilmay', error, backgroundColor: Colors.red[100]);
+    }
+  }
 }

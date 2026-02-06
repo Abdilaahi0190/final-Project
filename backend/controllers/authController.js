@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+/**
+ * Register a new user
+ */
 const signup = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -32,6 +35,9 @@ const signup = async (req, res) => {
     }
 };
 
+/**
+ * Authenticate user and return token
+ */
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -57,6 +63,9 @@ const login = async (req, res) => {
     }
 };
 
+/**
+ * Fetch all users (Admin only)
+ */
 const getUsers = async (req, res) => {
     try {
         const users = await User.find().select('-password');
@@ -66,6 +75,9 @@ const getUsers = async (req, res) => {
     }
 };
 
+/**
+ * Update user details or role (Admin only)
+ */
 const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
@@ -88,16 +100,12 @@ const updateUser = async (req, res) => {
         }
 
         if (req.body.password && req.body.password.length >= 6) {
-            // We need to hash the password manually here or rely on pre-save hook?
-            // The User model has a pre-save hook, but findByIdAndUpdate DOES NOT trigger pre-save hooks.
-            // So we must manualy hash it here or retrieve the user -> set props -> save().
-            // Let's use the save() approach for consistency with the hook.
             const userToUpdate = await User.findById(id);
             if (!userToUpdate) return res.status(404).json({ message: 'User not found' });
 
             if (role) userToUpdate.role = role;
             if (email) userToUpdate.email = email;
-            userToUpdate.password = req.body.password; // hook will hash this
+            userToUpdate.password = req.body.password; // Model hook will hash this
 
             await userToUpdate.save();
             const user = userToUpdate.toObject();
@@ -116,6 +124,9 @@ const updateUser = async (req, res) => {
     }
 };
 
+/**
+ * Delete a user account (Admin only)
+ */
 const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
@@ -126,6 +137,9 @@ const deleteUser = async (req, res) => {
     }
 };
 
+/**
+ * Create a new user manually (Admin only)
+ */
 const createUser = async (req, res) => {
     try {
         const { email, password, role } = req.body;

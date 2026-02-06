@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import 'package:shaqoraadi/controllers/application_controller.dart';
 import '../../models/job_model.dart';
 import '../../controllers/auth_controller.dart';
 
@@ -11,7 +12,8 @@ class JobDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color jobColor = _parseColor(job.color);
+    // Isticmaal midabka rasmiga ah (Primary Purple)
+    const Color primaryColor = Color(0xFF764ba2);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -22,12 +24,6 @@ class JobDetailScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () => Get.back(),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.bookmark_border, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -37,18 +33,20 @@ class JobDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Logo (Standard icon used for all jobs)
                   Center(
                     child: Container(
                       width: 80,
                       height: 80,
                       decoration: BoxDecoration(
-                        color: jobColor.withValues(alpha: 0.1),
+                        color: primaryColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Icon(_getIconData(job.logo), color: jobColor, size: 40),
+                      child: const Icon(Icons.business, color: primaryColor, size: 40),
                     ),
                   ),
                   const SizedBox(height: 16),
+                  // Title
                   Center(
                     child: Text(
                       job.title,
@@ -71,19 +69,63 @@ class JobDetailScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  
+                  // Tags (Location, Type, Salary)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildTag(Icons.location_on_outlined, job.location),
-                      const SizedBox(width: 12),
-                      _buildTag(Icons.access_time, job.type),
-                      const SizedBox(width: 12),
-                      _buildTag(Icons.attach_money, job.salary),
+                      // Location tag
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.location_on_outlined, size: 16, color: Colors.grey[600]),
+                            const SizedBox(width: 6),
+                            Text(job.location, style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[600])),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Type tag
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
+                            const SizedBox(width: 6),
+                            Text(job.type, style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[600])),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Salary tag
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.attach_money, size: 16, color: Colors.grey[600]),
+                            const SizedBox(width: 6),
+                            Text(job.salary, style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[600])),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 32),
                   Text(
-                    'Description',
+                    'Job Description',
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -103,33 +145,80 @@ class JobDetailScreen extends StatelessWidget {
               ),
             ),
           ),
+          // Apply Button
           Obx(() {
             final authController = Get.find<AuthController>();
+            final applicationController = Get.find<ApplicationController>();
+            
             if (authController.role.value != 'job_seeker') {
               return const SizedBox.shrink();
             }
+            
             return Padding(
               padding: const EdgeInsets.all(24),
               child: SizedBox(
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () => _showApplySuccessDialog(context),
+                  onPressed: applicationController.isLoading.value 
+                    ? null 
+                    : () async {
+                        bool success = await applicationController.apply(job.id);
+                        if (success && context.mounted) {
+                          // show success dialog
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.check_circle_outline, color: Colors.green, size: 60),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      'Success!',
+                                      style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Your application was sent.',
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.poppins(fontSize: 14),
+                                    ),
+                                    const SizedBox(height: 24),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.pop(context); // close dialog
+                                          Get.back(); // go back to list
+                                        },
+                                        child: const Text('OK'),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        }
+                      },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF764ba2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 2,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
-                  child: Text(
-                    'Apply Now',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: applicationController.isLoading.value
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        'Apply Now',
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                 ),
               ),
             );
@@ -137,128 +226,5 @@ class JobDetailScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Widget _buildTag(IconData icon, String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, size: 16, color: Colors.grey[600]),
-          const SizedBox(width: 6),
-          Text(
-            text,
-            style: GoogleFonts.poppins(
-              fontSize: 12,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showApplySuccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check_circle_outline,
-                    color: Colors.green,
-                    size: 40,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                        Text(
-                  'Good Luck!',
-                  style: GoogleFonts.poppins(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'You applied and now action will be',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Get.back(); // Go back to job list
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF764ba2),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      'Done',
-                      style: GoogleFonts.poppins(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Color _parseColor(String colorStr) {
-    try {
-      if (colorStr.startsWith('0xFF')) {
-        return Color(int.parse(colorStr));
-      } else if (colorStr.startsWith('#')) {
-        return Color(int.parse(colorStr.replaceFirst('#', '0xFF')));
-      }
-      return const Color(0xFF667eea);
-    } catch (e) {
-      return const Color(0xFF667eea);
-    }
-  }
-
-  IconData _getIconData(String iconName) {
-    switch (iconName.toLowerCase()) {
-      case 'code':
-        return Icons.code;
-      case 'storage':
-        return Icons.storage;
-      case 'brush':
-        return Icons.brush;
-      case 'work':
-        return Icons.work;
-      default:
-        return Icons.business;
-    }
   }
 }

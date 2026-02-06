@@ -1,5 +1,8 @@
 const Job = require('../models/Job');
 
+/**
+ * Fetch all available jobs (Ordered by newest)
+ */
 const getJobs = async (req, res) => {
     try {
         const jobs = await Job.find().sort({ createdAt: -1 });
@@ -9,6 +12,9 @@ const getJobs = async (req, res) => {
     }
 };
 
+/**
+ * Create a new job listing (Admin only)
+ */
 const createJob = async (req, res) => {
     try {
         const job = new Job(req.body);
@@ -19,6 +25,9 @@ const createJob = async (req, res) => {
     }
 };
 
+/**
+ * Populate initial job data if the collection is empty
+ */
 const seedJobs = async (req, res) => {
     try {
         const count = await Job.countDocuments();
@@ -64,6 +73,9 @@ const seedJobs = async (req, res) => {
     }
 };
 
+/**
+ * Update an existing job listing (Admin only)
+ */
 const updateJob = async (req, res) => {
     try {
         const { id } = req.params;
@@ -75,6 +87,9 @@ const updateJob = async (req, res) => {
     }
 };
 
+/**
+ * Delete a job listing (Admin only)
+ */
 const deleteJob = async (req, res) => {
     try {
         const { id } = req.params;

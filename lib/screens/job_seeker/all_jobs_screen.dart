@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../controllers/job_controller.dart';
 import '../../widgets/job_card.dart';
 
+/// Screen to display a full list of all available job postings
 class AllJobsScreen extends StatelessWidget {
   const AllJobsScreen({super.key});
 
@@ -14,11 +15,8 @@ class AllJobsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'All Jobs',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+          'Available Jobs',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: Colors.black87),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -34,10 +32,7 @@ class AllJobsScreen extends StatelessWidget {
 
         if (jobController.jobs.isEmpty) {
           return Center(
-            child: Text(
-              'No jobs available',
-              style: GoogleFonts.poppins(),
-            ),
+            child: Text('No jobs available at the moment', style: GoogleFonts.poppins()),
           );
         }
 

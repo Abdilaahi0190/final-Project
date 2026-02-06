@@ -1,116 +1,195 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+/// Adeegga dib-u-isticmaalka ee dhammaan isgaarsiinta backend API
 class ApiService {
+  // Isticmaal 10.0.2.2 ee Android Emulator (backend-ka maxalliga ah)
+  // Isticmaal localhost ee iOS Simulator
   static const String baseUrl = 'http://10.0.2.2:5000/api';
+  
+  // Muddada sugitaanka ee codsiyada
   static const Duration timeoutDuration = Duration(seconds: 15);
 
-  // Diiwaangelinta isticmaalaha cusub
-  Future<Map<String, dynamic>> signup(String email, String password) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/signup'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
-      ).timeout(timeoutDuration);
+  // --- Xaqiijinta (Authentication) ---
+
+  /// Is-diiwaangelinta isticmaalaha cusub
+  Future<http.Response> register(String email, String password) async {
+    final url = Uri.parse('$baseUrl/signup');
+    return await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email, 'password': password}),
+    ).timeout(timeoutDuration);
+  }
+
+  /// Soo gelitaanka (Login) iyo helitaanka token-ka
+  Future<http.Response> login(String email, String password) async {
+    final url = Uri.parse('$baseUrl/login');
+    return await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email, 'password': password}),
+    ).timeout(timeoutDuration);
+  }
+
+  // --- Shaqooyinka (Jobs) ---
+
+  /// Soo qaadashada dhammaan shaqooyinka bannaan
+  Future<List<dynamic>> getJobs() async {
+    final url = Uri.parse('$baseUrl/jobs');
+    final response = await http.get(url).timeout(timeoutDuration);
+
+    if (response.statusCode == 200) {
       return jsonDecode(response.body);
-    } catch (e) {
-      return {'message': 'Connection error: Unable to connect to server.'};
+    } else {
+      throw Exception('Ku guuldareystay soo qaadashada shaqooyinka');
     }
   }
 
-  // Soo gelitaanka isticmaalaha (Login)
-  Future<Map<String, dynamic>> login(String email, String password) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
-      ).timeout(timeoutDuration);
-      return jsonDecode(response.body);
-    } catch (e) {
-      return {'message': 'Connection error: Unable to connect to server.'};
-    }
-  }
-
-  // Soo qaadashada shaqooyinka oo dhan
-  Future<List<dynamic>> fetchJobs() async {
-    try {
-      final response = await http.get(Uri.parse('$baseUrl/jobs')).timeout(timeoutDuration);
-      if (response.statusCode == 200) return jsonDecode(response.body);
-      return [];
-    } catch (e) {
-      return [];
-    }
-  }
-
-  // Abuurista shaqo cusub (Admin kaliya)
-  Future<Map<String, dynamic>> createJob(String token, Map<String, dynamic> jobData) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/jobs'),
-      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+  /// Abuurista shaqo cusub (Admin kaliya)
+  Future<http.Response> createJob(String token, Map<String, dynamic> jobData) async {
+    final url = Uri.parse('$baseUrl/jobs');
+    return await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: jsonEncode(jobData),
     ).timeout(timeoutDuration);
-    return jsonDecode(response.body);
   }
 
-  // Wax ka beddelka shaqo jirta
-  Future<Map<String, dynamic>?> updateJob(String token, String id, Map<String, dynamic> jobData) async {
-    final response = await http.put(
-      Uri.parse('$baseUrl/jobs/$id'),
-      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+  /// Cusboonaysiinta shaqo jirta (Admin kaliya)
+  Future<http.Response> updateJob(String token, String jobId, Map<String, dynamic> jobData) async {
+    final url = Uri.parse('$baseUrl/jobs/$jobId');
+    return await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: jsonEncode(jobData),
     ).timeout(timeoutDuration);
-    if (response.statusCode == 200) return jsonDecode(response.body);
-    return null;
   }
 
-  // Tirtirida shaqo
-  Future<bool> deleteJob(String token, String id) async {
-    final response = await http.delete(
-      Uri.parse('$baseUrl/jobs/$id'),
-      headers: {'Authorization': 'Bearer $token'},
+  /// Tiridda shaqo (Admin kaliya)
+  Future<http.Response> deleteJob(String token, String jobId) async {
+    final url = Uri.parse('$baseUrl/jobs/$jobId');
+    return await http.delete(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
     ).timeout(timeoutDuration);
-    return response.statusCode == 200;
   }
 
-  // Soo qaadashada isticmaalayaasha (Admin kaliya)
+  // --- Maareynta Isticmaalaha (Admin kaliya) ---
+
+  /// Soo qaadashada dhammaan isticmaalayaasha
   Future<List<dynamic>> getUsers(String token) async {
+    final url = Uri.parse('$baseUrl/users');
     final response = await http.get(
-      Uri.parse('$baseUrl/users'),
-      headers: {'Authorization': 'Bearer $token'},
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
     ).timeout(timeoutDuration);
-    if (response.statusCode == 200) return jsonDecode(response.body);
-    return [];
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Ku guuldareystay soo qaadashada isticmaalayaasha');
+    }
   }
 
-  // Abuurista isticmaale cusub
-  Future<Map<String, dynamic>> createUser(String token, Map<String, dynamic> userData) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/users'),
-      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+  /// Abuurista isticmaale cusub gacanta
+  Future<http.Response> createUser(String token, Map<String, dynamic> userData) async {
+    final url = Uri.parse('$baseUrl/users');
+    return await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: jsonEncode(userData),
     ).timeout(timeoutDuration);
-    return jsonDecode(response.body);
   }
 
-  // Wax ka beddelka macluumaadka isticmaalaha
-  Future<Map<String, dynamic>?> updateUser(String token, String id, Map<String, dynamic> userData) async {
-    final response = await http.put(
-      Uri.parse('$baseUrl/users/$id'),
-      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+  /// Cusboonaysiinta faahfaahinta isticmaalaha ama kaalintiisa
+  Future<http.Response> updateUser(String token, String userId, Map<String, dynamic> userData) async {
+    final url = Uri.parse('$baseUrl/users/$userId');
+    return await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: jsonEncode(userData),
     ).timeout(timeoutDuration);
-    if (response.statusCode == 200) return jsonDecode(response.body);
-    return null;
   }
 
-  // Tirtirida isticmaale
-  Future<bool> deleteUser(String token, String id) async {
-    final response = await http.delete(
-      Uri.parse('$baseUrl/users/$id'),
-      headers: {'Authorization': 'Bearer $token'},
+  /// Tiridda isticmaale
+  Future<http.Response> deleteUser(String token, String userId) async {
+    final url = Uri.parse('$baseUrl/users/$userId');
+    return await http.delete(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
     ).timeout(timeoutDuration);
-    return response.statusCode == 200;
+  }
+
+  // --- Codsiyada (Applications) ---
+
+  /// Gudbinta codsi shaqo
+  Future<http.Response> applyForJob(String token, String jobId) async {
+    final url = Uri.parse('$baseUrl/applications/apply');
+    return await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'jobId': jobId}),
+    ).timeout(timeoutDuration);
+  }
+
+  /// Soo qaadashada codsiyada isticmaalaha hadda jooga
+  Future<List<dynamic>> getMyApplications(String token) async {
+    final url = Uri.parse('$baseUrl/applications/my-applications');
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    ).timeout(timeoutDuration);
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Ku guuldareystay soo qaadashada codsiyada');
+    }
+  }
+
+  /// Soo qaadashada codsiyada shaqo gaar ah (Admin kaliya)
+  Future<List<dynamic>> getJobApplications(String token, String jobId) async {
+    final url = Uri.parse('$baseUrl/applications/job/$jobId');
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    ).timeout(timeoutDuration);
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Ku guuldareystay soo qaadashada codsiyada shaqada');
+    }
   }
 }

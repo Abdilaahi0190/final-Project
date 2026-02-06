@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../controllers/auth_controller.dart';
 import '../../services/api_service.dart';
 
+/// Admin-only screen for managing user accounts and roles
 class AdminUserManagementScreen extends StatefulWidget {
   const AdminUserManagementScreen({super.key});
 
@@ -23,6 +24,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
     _fetchUsers();
   }
 
+  /// Fetches the list of all users from the backend
   Future<void> _fetchUsers() async {
     setState(() => _isLoading = true);
     try {
@@ -33,7 +35,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
       });
     } catch (e) {
       setState(() => _isLoading = false);
-      Get.snackbar('Error', 'Unable to fetch users');
+      Get.snackbar('Error', 'Unable to fetch user list');
     }
   }
 
@@ -48,7 +50,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _users.isEmpty
-              ? Center(child: Text('No other users', style: GoogleFonts.poppins()))
+              ? Center(child: Text('No other users found', style: GoogleFonts.poppins()))
               : RefreshIndicator(
                   onRefresh: _fetchUsers,
                   child: ListView.builder(
@@ -68,6 +70,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
     );
   }
 
+  /// Individual user item with edit and delete actions
   Widget _buildUserTile(dynamic user) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -86,15 +89,14 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
         subtitle: Text(
           'Role: ${user['role']}',
           style: GoogleFonts.poppins(fontSize: 12),
-          overflow: TextOverflow.ellipsis,
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.blue),
-            onPressed: () => _showUserEditDialog(user),
-          ),
+              onPressed: () => _showUserEditDialog(user),
+            ),
             IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
               onPressed: () => _confirmDelete(user['_id']),
@@ -105,6 +107,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
     );
   }
 
+  /// Dialog to create a new user account
   void _showUserDialog() {
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
@@ -114,7 +117,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: Text('Add User', style: GoogleFonts.poppins()),
+          title: Text('Create New User', style: GoogleFonts.poppins()),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -145,7 +148,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
                 if (context.mounted) Navigator.pop(context);
                 _fetchUsers();
               },
-              child: const Text('Save'),
+              child: const Text('Create'),
             ),
           ],
         ),
@@ -153,9 +156,10 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
     );
   }
 
+  /// Dialog to update an existing user's information or role
   void _showUserEditDialog(dynamic user) {
     final emailController = TextEditingController(text: user['email']);
-    final passwordController = TextEditingController(); // New Password Controller
+    final passwordController = TextEditingController();
     String selectedRole = user['role'];
 
     showDialog(
@@ -163,14 +167,14 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           scrollable: true,
-          title: Text('Edit User', style: GoogleFonts.poppins()),
+          title: Text('Edit User Account', style: GoogleFonts.poppins()),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(controller: emailController, decoration: const InputDecoration(labelText: 'Email')),
               TextField(
                 controller: passwordController, 
-                decoration: const InputDecoration(labelText: 'New Password (Optional)'), 
+                decoration: const InputDecoration(labelText: 'New Password (Leave blank to keep same)'), 
                 obscureText: true
               ),
               const SizedBox(height: 10),
@@ -197,12 +201,12 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
                   userData['password'] = passwordController.text;
                 }
                 final response = await _apiService.updateUser(authController.token.value, user['_id'], userData);
-                if (response != null) {
+                if (response.statusCode == 200) {
                   if (context.mounted) Navigator.pop(context);
                   _fetchUsers();
-                  Get.snackbar('Success', 'User updated successfully');
+                  Get.snackbar('Success', 'User profile updated');
                 } else {
-                  Get.snackbar('Error', 'Unable to edit user');
+                  Get.snackbar('Error', 'Update failed');
                 }
               },
               child: const Text('Update'),
@@ -213,12 +217,13 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
     );
   }
 
+  /// Delete confirmation dialog for users
   void _confirmDelete(String userId) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Are you sure?'),
-        content: const Text('Are you sure you want to delete this user?'),
+        title: const Text('Delete User?'),
+        content: const Text('This will permanently remove this user account.'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('No')),
           TextButton(

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../models/job_model.dart';
 import '../screens/job_seeker/job_detail_screen.dart';
 
+/// Reusable card widget to display a summary of a job posting
 class JobCard extends StatelessWidget {
   final Job job;
 
@@ -11,7 +12,8 @@ class JobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color cardColor = _parseColor(job.color);
+    // Isticmaal midabka rasmiga ah (Primary Purple) halkii laga isticmaali lahaa midabyo kala duwan
+    const Color primaryColor = Color(0xFF764ba2);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -27,16 +29,18 @@ class JobCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
+              // Weelka Logo-ga (Standard icon used for all jobs)
               Container(
-                width: 70, // Increased size
-                height: 70, // Increased size
+                width: 70,
+                height: 70,
                 decoration: BoxDecoration(
-                  color: cardColor.withValues(alpha: 0.1),
+                  color: primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(18),
                 ),
-                child: Icon(_getIconData(job.logo), color: cardColor, size: 36),
+                child: const Icon(Icons.business, color: primaryColor, size: 36),
               ),
               const SizedBox(width: 16),
+              // Meesha macluumaadka shaqada
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,7 +48,7 @@ class JobCard extends StatelessWidget {
                     Text(
                       job.title,
                       style: GoogleFonts.poppins(
-                        fontSize: 17, // Increased font size
+                        fontSize: 17,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
                       ),
@@ -55,43 +59,33 @@ class JobCard extends StatelessWidget {
                     Text(
                       job.company,
                       style: GoogleFonts.poppins(
-                        fontSize: 15, // Increased font size and visibility
-                        color: Colors.grey[800], // Darker color
+                        fontSize: 15,
+                        color: Colors.grey[800],
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(height: 8),
+                    // Safka macluumaadka hoose (Location iyo Salary)
                     Row(
                       children: [
-                        Icon(
-                          Icons.location_on_outlined,
-                          size: 16,
-                          color: Colors.grey[600],
-                        ),
+                        Icon(Icons.location_on_outlined, size: 16, color: Colors.grey[600]),
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(
                             job.location,
-                            style: GoogleFonts.poppins(
-                              fontSize: 14, // Increased font size
-                              color: Colors.grey[700], // Darker color
-                            ),
+                            style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[700]),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         const SizedBox(width: 12),
-                        Icon(
-                          Icons.attach_money,
-                          size: 16,
-                          color: Colors.grey[600],
-                        ),
+                        Icon(Icons.attach_money, size: 16, color: Colors.grey[600]),
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(
                             job.salary,
                             style: GoogleFonts.poppins(
-                              fontSize: 14, // Increased font size
-                              color: Colors.grey[700], // Darker color
+                              fontSize: 14,
+                              color: Colors.grey[700],
                               fontWeight: FontWeight.w600,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -107,33 +101,5 @@ class JobCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color _parseColor(String colorStr) {
-    try {
-      if (colorStr.startsWith('0xFF')) {
-        return Color(int.parse(colorStr));
-      } else if (colorStr.startsWith('#')) {
-        return Color(int.parse(colorStr.replaceFirst('#', '0xFF')));
-      }
-      return const Color(0xFF667eea);
-    } catch (e) {
-      return const Color(0xFF667eea);
-    }
-  }
-
-  IconData _getIconData(String iconName) {
-    switch (iconName.toLowerCase()) {
-      case 'code':
-        return Icons.code;
-      case 'storage':
-        return Icons.storage;
-      case 'brush':
-        return Icons.brush;
-      case 'work':
-        return Icons.work;
-      default:
-        return Icons.business;
-    }
   }
 }
