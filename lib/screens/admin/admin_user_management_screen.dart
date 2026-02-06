@@ -155,6 +155,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
 
   void _showUserEditDialog(dynamic user) {
     final emailController = TextEditingController(text: user['email']);
+    final passwordController = TextEditingController(); // New Password Controller
     String selectedRole = user['role'];
 
     showDialog(
@@ -167,6 +168,11 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(controller: emailController, decoration: const InputDecoration(labelText: 'Email')),
+              TextField(
+                controller: passwordController, 
+                decoration: const InputDecoration(labelText: 'New Password (Optional)'), 
+                obscureText: true
+              ),
               const SizedBox(height: 10),
               DropdownButton<String>(
                 value: selectedRole,
@@ -187,6 +193,9 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
                   'email': emailController.text,
                   'role': selectedRole,
                 };
+                if (passwordController.text.isNotEmpty) {
+                  userData['password'] = passwordController.text;
+                }
                 final response = await _apiService.updateUser(authController.token.value, user['_id'], userData);
                 if (response != null) {
                   if (context.mounted) Navigator.pop(context);

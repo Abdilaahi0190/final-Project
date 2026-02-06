@@ -3,9 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import '../admin/admin_job_management_screen.dart';
 import '../admin/admin_user_management_screen.dart';
+import 'all_jobs_screen.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/job_controller.dart';
-import '../../models/job_model.dart';
+import '../../widgets/job_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -79,7 +80,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () => Get.to(() => const AllJobsScreen()),
                       child: Text(
                         'See all',
                         style: GoogleFonts.poppins(
@@ -121,7 +122,7 @@ class HomeScreen extends StatelessWidget {
                   itemCount: jobController.jobs.length,
                   itemBuilder: (context, index) {
                     final job = jobController.jobs[index];
-                    return _buildJobCard(job);
+                    return JobCard(job: job);
                   },
                 );
               }),
@@ -281,124 +282,5 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Widget _buildJobCard(Job job) {
-    Color cardColor = _parseColor(job.color);
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: cardColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Icon(_getIconData(job.logo), color: cardColor, size: 30),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    job.title,
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                  Text(
-                    job.company,
-                    style: GoogleFonts.poppins(
-                      fontSize: 13,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 14,
-                        color: Colors.grey[400],
-                      ),
-                      const SizedBox(width: 4),
-                      Flexible(
-                        child: Text(
-                          job.location,
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            color: Colors.grey[500],
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Icon(
-                        Icons.attach_money,
-                        size: 14,
-                        color: Colors.grey[400],
-                      ),
-                      const SizedBox(width: 4),
-                      Flexible(
-                        child: Text(
-                          job.salary,
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            color: Colors.grey[500],
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Color _parseColor(String colorStr) {
-    try {
-      if (colorStr.startsWith('0xFF')) {
-        return Color(int.parse(colorStr));
-      } else if (colorStr.startsWith('#')) {
-        return Color(int.parse(colorStr.replaceFirst('#', '0xFF')));
-      }
-      return const Color(0xFF667eea);
-    } catch (e) {
-      return const Color(0xFF667eea);
-    }
-  }
-
-  IconData _getIconData(String iconName) {
-    switch (iconName.toLowerCase()) {
-      case 'code':
-        return Icons.code;
-      case 'storage':
-        return Icons.storage;
-      case 'brush':
-        return Icons.brush;
-      case 'work':
-        return Icons.work;
-      default:
-        return Icons.business;
-    }
   }
 }

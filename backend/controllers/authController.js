@@ -87,6 +87,24 @@ const updateUser = async (req, res) => {
             updateData.email = email;
         }
 
+        if (req.body.password && req.body.password.length >= 6) {
+            // We need to hash the password manually here or rely on pre-save hook?
+            // The User model has a pre-save hook, but findByIdAndUpdate DOES NOT trigger pre-save hooks.
+            // So we must manualy hash it here or retrieve the user -> set props -> save().
+            // Let's use the save() approach for consistency with the hook.
+            const userToUpdate = await User.findById(id);
+            if (!userToUpdate) return res.status(404).json({ message: 'User not found' });
+
+            if (role) userToUpdate.role = role;
+            if (email) userToUpdate.email = email;
+            userToUpdate.password = req.body.password; // hook will hash this
+
+            await userToUpdate.save();
+            const user = userToUpdate.toObject();
+            delete user.password;
+            return res.status(200).json(user);
+        }
+
         const user = await User.findByIdAndUpdate(id, updateData, { new: true }).select('-password');
         if (!user) {
             return res.status(404).json({ message: 'User not found' });

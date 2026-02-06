@@ -6,15 +6,14 @@ async function seedUser() {
     try {
         await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/JobPortal');
 
-        const userEmail = 'user@jobquest.com';
+        const userEmail = 'user@gmail.com';
         const existingUser = await User.findOne({ email: userEmail });
 
         if (existingUser) {
-            console.log('User already exists');
-            console.log('Email:', userEmail);
-            // We assume password is 'user123' if it exists from this script, 
-            // but we can't be 100% sure if changed manually. 
-            // For now, we just report it exists.
+            console.log('User already exists. Updating password...');
+            existingUser.password = 'user123';
+            await existingUser.save();
+            console.log('Password updated to: user123');
         } else {
             const user = new User({
                 email: userEmail,
