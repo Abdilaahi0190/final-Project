@@ -19,13 +19,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'JobQuest',
+      title: 'Job Portal App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF667eea),
+          seedColor: const Color(0xFF764ba2),
+          primary: const Color(0xFF764ba2),
+          secondary: Colors.white,
         ),
         useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFFF5F5F5), // Light neutral background
       ),
       initialRoute: '/login',
       getPages: [

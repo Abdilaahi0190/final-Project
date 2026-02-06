@@ -13,7 +13,10 @@ class AdminJobManagementScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Jobs Management', style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+        title: Text(
+          'Jobs Management',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: const Color(0xFF764ba2),
         foregroundColor: Colors.white,
       ),
@@ -24,7 +27,10 @@ class AdminJobManagementScreen extends StatelessWidget {
 
         if (jobController.jobs.isEmpty) {
           return Center(
-            child: Text('No jobs available', style: GoogleFonts.poppins(fontSize: 16)),
+            child: Text(
+              'No jobs available',
+              style: GoogleFonts.poppins(fontSize: 16),
+            ),
           );
         }
 
@@ -48,7 +54,11 @@ class AdminJobManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildJobTile(BuildContext context, Job job, JobController controller) {
+  Widget _buildJobTile(
+    BuildContext context,
+    Job job,
+    JobController controller,
+  ) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
@@ -86,11 +96,17 @@ class AdminJobManagementScreen extends StatelessWidget {
     );
   }
 
-  void _showJobDialog(BuildContext context, JobController controller, {Job? job}) {
+  void _showJobDialog(
+    BuildContext context,
+    JobController controller, {
+    Job? job,
+  }) {
     final titleController = TextEditingController(text: job?.title);
     final companyController = TextEditingController(text: job?.company);
     final salaryController = TextEditingController(text: job?.salary);
-    final typeController = TextEditingController(text: job?.type ?? 'Full-time');
+    final typeController = TextEditingController(
+      text: job?.type ?? 'Full-time',
+    );
     final locationController = TextEditingController(text: job?.location);
     final descriptionController = TextEditingController(text: job?.description);
 
@@ -98,20 +114,47 @@ class AdminJobManagementScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         scrollable: true,
-        title: Text(job == null ? 'Add Job' : 'Edit Job', style: GoogleFonts.poppins()),
+        title: Text(
+          job == null ? 'Add Job' : 'Edit Job',
+          style: GoogleFonts.poppins(),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(controller: titleController, decoration: const InputDecoration(labelText: 'Title')),
-            TextField(controller: companyController, decoration: const InputDecoration(labelText: 'Company')),
-            TextField(controller: salaryController, decoration: const InputDecoration(labelText: 'Salary')),
-            TextField(controller: typeController, decoration: const InputDecoration(labelText: 'Type (Full-time/Contract)')),
-            TextField(controller: locationController, decoration: const InputDecoration(labelText: 'Location')),
-            TextField(controller: descriptionController, decoration: const InputDecoration(labelText: 'Description'), maxLines: 3),
+            TextField(
+              controller: titleController,
+              decoration: const InputDecoration(labelText: 'Title'),
+            ),
+            TextField(
+              controller: companyController,
+              decoration: const InputDecoration(labelText: 'Company'),
+            ),
+            TextField(
+              controller: salaryController,
+              decoration: const InputDecoration(labelText: 'Salary'),
+            ),
+            TextField(
+              controller: typeController,
+              decoration: const InputDecoration(
+                labelText: 'Type (Full-time/Contract)',
+              ),
+            ),
+            TextField(
+              controller: locationController,
+              decoration: const InputDecoration(labelText: 'Location'),
+            ),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(labelText: 'Description'),
+              maxLines: 3,
+            ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () async {
               final jobData = {
@@ -139,25 +182,36 @@ class AdminJobManagementScreen extends StatelessWidget {
     );
   }
 
-  void _confirmDelete(BuildContext context, JobController controller, String jobId) {
+  void _confirmDelete(
+    BuildContext context,
+    JobController controller,
+    String jobId,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Are you sure?'),
         content: const Text('Are you sure you want to delete this job?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('No')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('No'),
+          ),
           TextButton(
             onPressed: () async {
               await controller.deleteJob(jobId);
               if (context.mounted) Navigator.pop(context);
             },
-            child: const Text('Yes, Delete', style: TextStyle(color: Colors.red)),
+            child: const Text(
+              'Yes, Delete',
+              style: TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),
     );
   }
+
   Color _parseColor(String colorStr) {
     try {
       if (colorStr.startsWith('0xFF')) {

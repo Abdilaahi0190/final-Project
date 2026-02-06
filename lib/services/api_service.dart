@@ -5,6 +5,7 @@ class ApiService {
   static const String baseUrl = 'http://10.0.2.2:5000/api';
   static const Duration timeoutDuration = Duration(seconds: 15);
 
+  // Diiwaangelinta isticmaalaha cusub
   Future<Map<String, dynamic>> signup(String email, String password) async {
     try {
       final response = await http.post(
@@ -18,6 +19,7 @@ class ApiService {
     }
   }
 
+  // Soo gelitaanka isticmaalaha (Login)
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       final response = await http.post(
@@ -31,6 +33,7 @@ class ApiService {
     }
   }
 
+  // Soo qaadashada shaqooyinka oo dhan
   Future<List<dynamic>> fetchJobs() async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/jobs')).timeout(timeoutDuration);
@@ -41,6 +44,7 @@ class ApiService {
     }
   }
 
+  // Abuurista shaqo cusub (Admin kaliya)
   Future<Map<String, dynamic>> createJob(String token, Map<String, dynamic> jobData) async {
     final response = await http.post(
       Uri.parse('$baseUrl/jobs'),
@@ -50,6 +54,7 @@ class ApiService {
     return jsonDecode(response.body);
   }
 
+  // Wax ka beddelka shaqo jirta
   Future<Map<String, dynamic>?> updateJob(String token, String id, Map<String, dynamic> jobData) async {
     final response = await http.put(
       Uri.parse('$baseUrl/jobs/$id'),
@@ -60,6 +65,7 @@ class ApiService {
     return null;
   }
 
+  // Tirtirida shaqo
   Future<bool> deleteJob(String token, String id) async {
     final response = await http.delete(
       Uri.parse('$baseUrl/jobs/$id'),
@@ -68,6 +74,7 @@ class ApiService {
     return response.statusCode == 200;
   }
 
+  // Soo qaadashada isticmaalayaasha (Admin kaliya)
   Future<List<dynamic>> getUsers(String token) async {
     final response = await http.get(
       Uri.parse('$baseUrl/users'),
@@ -77,6 +84,7 @@ class ApiService {
     return [];
   }
 
+  // Abuurista isticmaale cusub
   Future<Map<String, dynamic>> createUser(String token, Map<String, dynamic> userData) async {
     final response = await http.post(
       Uri.parse('$baseUrl/users'),
@@ -86,6 +94,7 @@ class ApiService {
     return jsonDecode(response.body);
   }
 
+  // Wax ka beddelka macluumaadka isticmaalaha
   Future<Map<String, dynamic>?> updateUser(String token, String id, Map<String, dynamic> userData) async {
     final response = await http.put(
       Uri.parse('$baseUrl/users/$id'),
@@ -96,6 +105,7 @@ class ApiService {
     return null;
   }
 
+  // Tirtirida isticmaale
   Future<bool> deleteUser(String token, String id) async {
     final response = await http.delete(
       Uri.parse('$baseUrl/users/$id'),

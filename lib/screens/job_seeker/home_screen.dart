@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
           : null,
       appBar: AppBar(
         title: Text(
-          'JobQuest',
+          'Job Portal App',
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
@@ -139,9 +139,7 @@ class HomeScreen extends StatelessWidget {
         children: [
           DrawerHeader(
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-              ),
+              color: Color(0xFF764ba2), // Solid Purple
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,9 +210,7 @@ class HomeScreen extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.only(left: 24, right: 24, bottom: 24, top: 10),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-        ),
+        color: Color(0xFF764ba2), // Solid Purple
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(30),
           bottomRight: Radius.circular(30),

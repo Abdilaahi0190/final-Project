@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import '../../controllers/auth_controller.dart';
+import 'widgets/auth_header.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -59,12 +60,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        height: MediaQuery.of(context).size.height,
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-          ),
+          color: Color(0xFF764ba2), // Solid Purple
         ),
         child: SafeArea(
           child: SingleChildScrollView(
@@ -76,23 +74,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.person_add_rounded, size: 80, color: Colors.white),
-                    ),
-                    const SizedBox(height: 30),
-                    Text(
-                      'Create Account',
-                      style: GoogleFonts.poppins(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Join and start your career',
-                      style: GoogleFonts.poppins(fontSize: 16, color: Colors.white.withValues(alpha: 0.9)),
+                    const AuthHeader(
+                      title: 'Create Account',
+                      subtitle: 'Join and start your career',
                     ),
                     const SizedBox(height: 40),
                     _buildTextField(
