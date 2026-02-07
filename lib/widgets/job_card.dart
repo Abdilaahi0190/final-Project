@@ -12,7 +12,7 @@ class JobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Isticmaal midabka rasmiga ah (Primary Purple) halkii laga isticmaali lahaa midabyo kala duwan
+    // Use official primary color (Primary Purple) instead of using different colors
     const Color primaryColor = Color(0xFF764ba2);
 
     return Card(
@@ -29,7 +29,7 @@ class JobCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              // Weelka Logo-ga (Standard icon used for all jobs)
+              // Logo container (Standard icon used for all jobs)
               Container(
                 width: 70,
                 height: 70,
@@ -40,7 +40,7 @@ class JobCard extends StatelessWidget {
                 child: const Icon(Icons.business, color: primaryColor, size: 36),
               ),
               const SizedBox(width: 16),
-              // Meesha macluumaadka shaqada
+              // Job information section
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,7 +65,7 @@ class JobCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    // Safka macluumaadka hoose (Location iyo Salary)
+                    // Bottom information row (Location and Salary)
                     Row(
                       children: [
                         Icon(Icons.location_on_outlined, size: 16, color: Colors.grey[600]),

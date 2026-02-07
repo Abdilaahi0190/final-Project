@@ -4,7 +4,7 @@ import '../models/application_model.dart';
 import 'auth_controller.dart';
 import 'dart:convert';
 
-/// Controller-ka loogu talagalay maareynta xaaladda codsiyada shaqada iyo ficillada
+/// Controller for managing job application state and actions
 class ApplicationController extends GetxController {
   final ApiService _apiService = ApiService();
   
@@ -17,7 +17,7 @@ class ApplicationController extends GetxController {
     fetchMyApplications();
   }
 
-  /// Gudbinta codsi cusub oo loogu talagalay aqoonsiga shaqada (job ID) la bixiyay
+  /// Submit a new application for the given job ID
   Future<bool> apply(String jobId) async {
     try {
       isLoading.value = true;
@@ -26,23 +26,23 @@ class ApplicationController extends GetxController {
       final response = await _apiService.applyForJob(token, jobId);
       
       if (response.statusCode == 201) {
-        Get.snackbar('Guul', 'Codsiga waa la gudbiyay si guul leh!');
+        Get.snackbar('Success', 'Application submitted successfully!');
         fetchMyApplications(); // Cusboonaysiinta liiska
         return true;
       } else {
         final data = jsonDecode(response.body);
-        Get.snackbar('Khalad', data['message'] ?? 'Waa lagu guuldareystay codsiga');
+        Get.snackbar('Error', data['message'] ?? 'Application failed');
         return false;
       }
     } catch (e) {
-      Get.snackbar('Khalad', 'Xiriirka waa uu guuldareystay');
+      Get.snackbar('Error', 'Connection failed');
       return false;
     } finally {
       isLoading.value = false;
     }
   }
 
-  /// Soo qaadashada dhammaan codsiyada uu gudbiyay isticmaalaha hadda jooga
+  /// Fetch all applications submitted by the current user
   Future<void> fetchMyApplications() async {
     try {
       isLoading.value = true;
@@ -52,7 +52,7 @@ class ApplicationController extends GetxController {
       final List<dynamic> data = await _apiService.getMyApplications(token);
       applications.value = data.map((json) => Application.fromJson(json)).toList();
     } catch (e) {
-      Get.snackbar('Ogeysiis', 'Ma suurtagelin in la waafajiyo codsiyada');
+      Get.snackbar('Notice', 'Could not sync applications');
     } finally {
       isLoading.value = false;
     }

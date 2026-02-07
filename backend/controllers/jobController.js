@@ -1,7 +1,7 @@
 const Job = require('../models/Job');
 
 /**
- * Fetch all available jobs (Ordered by newest)
+ * List ga dhamaan hsaqooyinka xareysan sytemka
  */
 const getJobs = async (req, res) => {
     try {
@@ -13,7 +13,7 @@ const getJobs = async (req, res) => {
 };
 
 /**
- * Create a new job listing (Admin only)
+ * in shaqo cusub la abuuro (Admin only)
  */
 const createJob = async (req, res) => {
     try {
@@ -26,7 +26,7 @@ const createJob = async (req, res) => {
 };
 
 /**
- * Populate initial job data if the collection is empty
+ * markii ugu horeysay system ka databse ka wa eber kuwan ba lagu bilbaya sameyntoda
  */
 const seedJobs = async (req, res) => {
     try {
@@ -74,7 +74,7 @@ const seedJobs = async (req, res) => {
 };
 
 /**
- * Update an existing job listing (Admin only)
+ *in wax lag badalo sahqoyinka jra (Admin only)
  */
 const updateJob = async (req, res) => {
     try {
@@ -88,7 +88,7 @@ const updateJob = async (req, res) => {
 };
 
 /**
- * Delete a job listing (Admin only)
+ * in la tiro shaqo (Admin only)
  */
 const deleteJob = async (req, res) => {
     try {

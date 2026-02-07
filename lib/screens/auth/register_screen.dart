@@ -11,28 +11,24 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  // Controller-ada loogu talagalay meelaha banaan (Fields)
+  // Controllers for text fields
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
   
-  // Is-beddelka muuqashada password-ka
+  // Toggle password visibility
   bool _obscurePassword = true;
 
-  // Soo qaadashada auth controller-ka
+  // Dependency injection for auth controller
   final AuthController _authController = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        // Qurxinta midabka asalka ah (Background gradient)
+        // Background gradient decoration
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-          ),
+          color: Color(0xFF764ba2),
         ),
         child: SafeArea(
           child: Center(
@@ -46,7 +42,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Cinwaanka (Title)
+                      // Logo
+                      Image.asset(
+                        'assets/Job-logo.jpg',
+                        height: 80,
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(height: 20),
+                      // Title
                       Text(
                         'Create Account',
                         style: GoogleFonts.poppins(
@@ -57,7 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Ku soo biir oo bilow mustaqbalkaaga',
+                        'Join us and start your future',
                         style: GoogleFonts.poppins(color: Colors.grey[600]),
                       ),
                       const SizedBox(height: 40),
@@ -137,7 +140,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       )),
                       const SizedBox(height: 20),
 
-                      // Dib ugu laabashada login
+                      // Go back to login screen
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -165,31 +168,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  // Shaqada (Function) loogu talagalay caqliga is-diiwaangelinta
+  // Function to handle registration logic
   void _handleRegister() async {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
     String confirmPassword = _confirmPasswordController.text.trim();
 
-    // Hubinta aasaasiga ah (Basic checks)
+    // Basic validation checks
     if (email.isEmpty || password.isEmpty) {
-      Get.snackbar('Khalad', 'Fadlan buuxi dhammaan meelaha banaan', backgroundColor: Colors.red[100]);
+      Get.snackbar('Error', 'Please fill in all fields', backgroundColor: Colors.red[100]);
       return;
     }
 
-    // Hubi haddii password-yadu ay is leeyihiin
+    // Check if passwords match
     if (password != confirmPassword) {
-      Get.snackbar('Khalad', 'Password-yadu isma lahan', backgroundColor: Colors.red[100]);
+      Get.snackbar('Error', 'Passwords do not match', backgroundColor: Colors.red[100]);
       return;
     }
 
-    // Is-diiwaangelin iyadoo la isticmaalayo controller-ka
+    // Signup using the controller
     final error = await _authController.signup(email, password);
     if (error == null) {
-      Get.snackbar('Guul', 'Akoonka waa la abuuray si guul leh!');
+      Get.snackbar('Success', 'Account created successfully!');
       Get.offAllNamed('/home');
     } else {
-      Get.snackbar('Is-diiwaangelintu waa Fashilantay', error, backgroundColor: Colors.red[100]);
+      Get.snackbar('Registration Failed', error, backgroundColor: Colors.red[100]);
     }
   }
 }

@@ -13,17 +13,17 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Soo qaadashada controller-rada
+    // Get controllers
     final AuthController authController = Get.find<AuthController>();
     final JobController jobController = Get.find<JobController>();
 
-    // Soo qaadashada xogta isticmaalaha
+    // Get user data
     String userEmail = authController.email.value;
     String userRole = authController.role.value;
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      // Doorashada dhinaca (Drawer)
+      // Navigation Drawer
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -34,14 +34,18 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.white24,
-                    child: Icon(Icons.person, color: Colors.white, size: 30),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.asset(
+                      'assets/Job-logo.jpg',
+                      height: 50,
+                      width: 50,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 15),
                   Text(
-                    userRole == 'admin' ? 'Qaybta Maamulka' : 'Shaqo Raadiye',
+                    userRole == 'admin' ? 'Admin Dashboard' : 'Job Seeker',
                     style: GoogleFonts.poppins(
                       color: Colors.white,
                       fontSize: 18,
@@ -51,11 +55,11 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // Waxyaabaha u gaarka ah Shaqo Raadiyaha
+            // Job Seeker specific items
             if (userRole != 'admin') ...[
               ListTile(
                 leading: const Icon(Icons.person_outline, color: Color(0xFF764ba2)),
-                title: Text('Profile-kayga', style: GoogleFonts.poppins()),
+                title: Text('My Profile', style: GoogleFonts.poppins()),
                 onTap: () {
                   Navigator.pop(context);
                   Get.toNamed('/profile');
@@ -63,18 +67,18 @@ class HomeScreen extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.assignment_outlined, color: Color(0xFF764ba2)),
-                title: Text('Codsiyadayda', style: GoogleFonts.poppins()),
+                title: Text('My Applications', style: GoogleFonts.poppins()),
                 onTap: () {
                   Navigator.pop(context);
                   Get.toNamed('/my-applications');
                 },
               ),
             ],
-            // Waxyaabaha u gaarka ah Maamulka (Admin)
+            // Admin specific items
             if (userRole == 'admin') ...[
               ListTile(
                 leading: const Icon(Icons.work_outline, color: Color(0xFF764ba2)),
-                title: Text('Maareynta Shaqooyinka', style: GoogleFonts.poppins()),
+                title: Text('Job Management', style: GoogleFonts.poppins()),
                 onTap: () {
                   Navigator.pop(context);
                   Get.to(() => const AdminJobManagementScreen());
@@ -82,7 +86,7 @@ class HomeScreen extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.people_alt_outlined, color: Color(0xFF764ba2)),
-                title: Text('Maareynta Isticmaalayaasha', style: GoogleFonts.poppins()),
+                title: Text('User Management', style: GoogleFonts.poppins()),
                 onTap: () {
                   Navigator.pop(context);
                   Get.to(() => const AdminUserManagementScreen());
@@ -92,7 +96,7 @@ class HomeScreen extends StatelessWidget {
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
-              title: Text('Ka Bax', style: GoogleFonts.poppins(color: Colors.red)),
+              title: Text('Logout', style: GoogleFonts.poppins(color: Colors.red)),
               onTap: () {
                 Navigator.pop(context);
                 authController.logout();
@@ -103,7 +107,7 @@ class HomeScreen extends StatelessWidget {
       ),
       appBar: AppBar(
         title: Text(
-          'ShaqoRaadi',
+          'JobFinder',
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
@@ -129,7 +133,7 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Qaybta sare (Header)
+              // Header Section
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.only(left: 24, right: 24, bottom: 24, top: 10),
@@ -147,7 +151,7 @@ class HomeScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Maalin wanaagsan,',
+                          'Good day,',
                           style: GoogleFonts.poppins(fontSize: 18, color: Colors.white70),
                         ),
                         Container(
@@ -174,9 +178,11 @@ class HomeScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                     const SizedBox(height: 20),
-                    // Meesha baaritaanka (Search Bar)
+                    // Search Bar
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
@@ -188,7 +194,7 @@ class HomeScreen extends StatelessWidget {
                         style: GoogleFonts.poppins(color: Colors.white),
                         decoration: InputDecoration(
                           icon: const Icon(Icons.search, color: Colors.white),
-                          hintText: 'Raadi shaqooyin...',
+                          hintText: 'Search jobs...',
                           hintStyle: GoogleFonts.poppins(color: Colors.white70),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(vertical: 12),
@@ -201,24 +207,27 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // Qaybta shaqooyinka ugu dambeeyay
+              // Recent Jobs Section
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Shaqooyinkii u Dambeeyay',
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                    Expanded(
+                      child: Text(
+                        'Recent Jobs',
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     TextButton(
                       onPressed: () => Get.to(() => const AllJobsScreen()),
                       child: Text(
-                        'Arag dhammaan',
+                        'See All',
                         style: GoogleFonts.poppins(color: const Color(0xFF764ba2)),
                       ),
                     ),
@@ -226,7 +235,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
 
-              // Liiska Shaqooyinka
+              // Job List
               Obx(() {
                 if (jobController.isLoading.value) {
                   return const Center(
@@ -241,7 +250,7 @@ class HomeScreen extends StatelessWidget {
                   return Center(
                     child: Padding(
                       padding: const EdgeInsets.all(40),
-                      child: Text('Ma jiraan shaqooyin banaan', style: GoogleFonts.poppins()),
+                      child: Text('No jobs available', style: GoogleFonts.poppins()),
                     ),
                   );
                 }

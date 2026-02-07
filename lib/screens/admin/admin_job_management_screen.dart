@@ -57,7 +57,7 @@ class AdminJobManagementScreen extends StatelessWidget {
 
   /// Individual job list item with edit and delete actions
   Widget _buildJobTile(BuildContext context, Job job, JobController controller) {
-    // Isticmaal midabka rasmiga ah (Primary Purple)
+    // Use official primary color (Primary Purple)
     const Color primaryColor = Color(0xFF764ba2);
 
     return Card(
@@ -111,26 +111,26 @@ class AdminJobManagementScreen extends StatelessWidget {
       builder: (context) => AlertDialog(
         scrollable: true,
         title: Text(
-          job == null ? 'Ku dar Shaqo' : 'Wax ka beddel Shaqada',
+          job == null ? 'Add Job' : 'Edit Job',
           style: GoogleFonts.poppins(),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(controller: titleController, decoration: const InputDecoration(labelText: 'Cinwaanka Shaqada')),
-            TextField(controller: companyController, decoration: const InputDecoration(labelText: 'Shirkadda')),
-            TextField(controller: salaryController, decoration: const InputDecoration(labelText: 'Mushaarka')),
-            TextField(controller: typeController, decoration: const InputDecoration(labelText: 'Nooca Shaqada')),
-            TextField(controller: locationController, decoration: const InputDecoration(labelText: 'Goobta')),
+            TextField(controller: titleController, decoration: const InputDecoration(labelText: 'Job Title')),
+            TextField(controller: companyController, decoration: const InputDecoration(labelText: 'Company')),
+            TextField(controller: salaryController, decoration: const InputDecoration(labelText: 'Salary')),
+            TextField(controller: typeController, decoration: const InputDecoration(labelText: 'Job Type')),
+            TextField(controller: locationController, decoration: const InputDecoration(labelText: 'Location')),
             TextField(
               controller: descriptionController,
-              decoration: const InputDecoration(labelText: 'Faahfaahinta'),
+              decoration: const InputDecoration(labelText: 'Description'),
               maxLines: 3,
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Jooji')),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () async {
               final jobData = {
@@ -140,8 +140,6 @@ class AdminJobManagementScreen extends StatelessWidget {
                 'type': typeController.text,
                 'location': locationController.text,
                 'description': descriptionController.text,
-                'logo': 'work',
-                'color': '0xFF764ba2',
               };
 
               if (job == null) {
@@ -151,7 +149,7 @@ class AdminJobManagementScreen extends StatelessWidget {
               }
               if (context.mounted) Navigator.pop(context);
             },
-            child: const Text('Keydi'),
+            child: const Text('Save'),
           ),
         ],
       ),
@@ -163,16 +161,16 @@ class AdminJobManagementScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Ma tirtiraysaa?'),
-        content: const Text('Falkan dib looguma noqon karo. Ma hubtaa?'),
+        title: const Text('Delete Job?'),
+        content: const Text('This action cannot be undone. Are you sure?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Jooji')),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
           TextButton(
             onPressed: () async {
               await controller.deleteJob(jobId);
               if (context.mounted) Navigator.pop(context);
             },
-            child: const Text('Tirtir', style: TextStyle(color: Colors.red)),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),

@@ -1,14 +1,13 @@
 const Application = require('../models/Application');
 
 /**
- * Handle job application submission
- */
+Qeybt aSahqoyinka laso codsay lagu handle gareynyo */
 exports.applyToJob = async (req, res) => {
     try {
         const { jobId } = req.body;
         const applicantId = req.userId;
 
-        // Verify if the user has already applied for this job
+        // hubi hadi user kan uu shaqo horay u dalbay
         const existingApp = await Application.findOne({ job: jobId, applicant: applicantId });
         if (existingApp) {
             return res.status(400).json({ message: 'You have already applied for this job' });
@@ -27,7 +26,7 @@ exports.applyToJob = async (req, res) => {
 };
 
 /**
- * Fetch all applications for the logged-in seeker
+ * dhamaan Job Seakers ka 
  */
 exports.getUserApplications = async (req, res) => {
     try {
@@ -41,7 +40,7 @@ exports.getUserApplications = async (req, res) => {
 };
 
 /**
- * Fetch all applications for a specific job (Admin only)
+ * Dhamaan Codsiyada lasoo dirsday
  */
 exports.getJobApplications = async (req, res) => {
     try {

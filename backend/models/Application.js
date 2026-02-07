@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 /**
- * Application Schema - Records a user applying for a specific job
+ * Qeybta codsiga shaqada
  */
 const ApplicationSchema = new mongoose.Schema({
     job: {

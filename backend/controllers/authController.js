@@ -2,13 +2,13 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 /**
- * Register a new user
+ * Qeybta diwangalinat aama registration ka
  */
 const signup = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Validation
+        // Qeybt avalidationska 
         if (!email || !password) {
             return res.status(400).json({ message: 'Email and password are required' });
         }
@@ -36,7 +36,7 @@ const signup = async (req, res) => {
 };
 
 /**
- * Authenticate user and return token
+ * Authenticate users ka iyo tokenba 
  */
 const login = async (req, res) => {
     try {
@@ -64,7 +64,7 @@ const login = async (req, res) => {
 };
 
 /**
- * Fetch all users (Admin only)
+ * Dhamaan User ka Qeybtaan wa un adminka kaliya arki karo 
  */
 const getUsers = async (req, res) => {
     try {
@@ -76,7 +76,7 @@ const getUsers = async (req, res) => {
 };
 
 /**
- * Update user details or role (Admin only)
+ * Update lagu sameyo user ka (Admin only)
  */
 const updateUser = async (req, res) => {
     try {
@@ -105,7 +105,7 @@ const updateUser = async (req, res) => {
 
             if (role) userToUpdate.role = role;
             if (email) userToUpdate.email = email;
-            userToUpdate.password = req.body.password; // Model hook will hash this
+            userToUpdate.password = req.body.password;  
 
             await userToUpdate.save();
             const user = userToUpdate.toObject();
@@ -125,7 +125,7 @@ const updateUser = async (req, res) => {
 };
 
 /**
- * Delete a user account (Admin only)
+ * Delete ama la tiro usr kaliya admin (Admin only)
  */
 const deleteUser = async (req, res) => {
     try {
@@ -138,7 +138,7 @@ const deleteUser = async (req, res) => {
 };
 
 /**
- * Create a new user manually (Admin only)
+ * Create new user ma diwnalgint auser ka aydo frontend lag so xareynyo  (Admin only)
  */
 const createUser = async (req, res) => {
     try {

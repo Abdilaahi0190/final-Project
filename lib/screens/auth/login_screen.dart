@@ -1,4 +1,4 @@
-// Shaashadda Soo Gelitaanka (Login)
+// Login Screen
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
@@ -12,27 +12,23 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // Controller-ada loogu talagalay in laga soo qaado qoraalka meelaha banaan
+  // Controllers for text fields
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   
-  // Qari ama tusi password-ka
+  // Toggle password visibility
   bool _obscurePassword = true;
 
-  // Soo qaadashada auth controller-ka
+  // Dependency injection for auth controller
   final AuthController _authController = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        // Qurxinta midabka asalka ah (Background gradient)
+        // Background gradient decoration
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-          ),
+          color: Color(0xFF764ba2),
         ),
         child: SafeArea(
           child: Center(
@@ -46,6 +42,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Logo
+                      Image.asset(
+                        'assets/Job-logo.jpg',
+                        height: 80,
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(height: 20),
                       // title text
                       Text(
                         'Welcome Back',
@@ -146,25 +149,25 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Shaqada (Function) gacanta ku haysa soo gelitaanka
+  // Function to handle login logic
   void _handleLogin() async {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
 
-    // Hubi haddii meelaha banaan ay wax ka maqan yihiin
+    // Basic validation for empty fields
     if (email.isEmpty || password.isEmpty) {
-      Get.snackbar('Khalad', 'Fadlan buuxi dhammaan meelaha banaan', backgroundColor: Colors.red[100]);
+      Get.snackbar('Error', 'Please fill in all fields', backgroundColor: Colors.red[100]);
       return;
     }
 
-    // Ka wac login controller-ka
+    // Call the login method from auth controller
     final error = await _authController.login(email, password);
     if (error == null) {
-      // Guul!
+      // Success!
       Get.offAllNamed('/home');
     } else {
-      // Tus farriinta khaladka
-      Get.snackbar('Soo Gelitaanku waa Fashilmay', error, backgroundColor: Colors.red[100]);
+      // Show error message
+      Get.snackbar('Login Failed', error, backgroundColor: Colors.red[100]);
     }
   }
 }

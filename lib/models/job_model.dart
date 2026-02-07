@@ -7,8 +7,6 @@ class Job {
   final String type;
   final String location;
   final String description;
-  final String logo;
-  final String color;
 
   Job({
     required this.id,
@@ -18,8 +16,6 @@ class Job {
     required this.type,
     required this.location,
     required this.description,
-    required this.logo,
-    required this.color,
   });
 
   /// Factory constructor to create a Job object from JSON data
@@ -32,8 +28,6 @@ class Job {
       type: json['type'] ?? '',
       location: json['location'] ?? '',
       description: json['description'] ?? '',
-      logo: json['logo'] ?? 'work',
-      color: json['color'] ?? '0xFF667eea',
     );
   }
 }

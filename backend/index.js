@@ -27,8 +27,6 @@ connectDB().then(async () => {
                     type: 'Full-time',
                     location: 'Remote',
                     description: 'We are looking for an experienced Flutter developer to join our mobile team.',
-                    logo: 'code',
-                    color: '0xFF2196F3'
                 },
                 {
                     title: 'Backend Engineer',
@@ -37,8 +35,6 @@ connectDB().then(async () => {
                     type: 'Full-time',
                     location: 'New York, US',
                     description: 'Join our backend team to build scalable APIs using Node.js and MongoDB.',
-                    logo: 'storage',
-                    color: '0xFF4CAF50'
                 },
                 {
                     title: 'UI/UX Designer',
@@ -47,8 +43,6 @@ connectDB().then(async () => {
                     type: 'Contract',
                     location: 'London, UK',
                     description: 'Design beautiful interfaces for our various clients around the world.',
-                    logo: 'brush',
-                    color: '0xFFE91E63'
                 }
             ];
             await Job.insertMany(initialJobs);

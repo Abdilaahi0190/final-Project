@@ -12,7 +12,7 @@ import 'controllers/application_controller.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // Bilaabista dependency injection ee loogu talagalay controller-rada
+  // Initialize dependency injection for controllers
   Get.put(AuthController());
   Get.put(JobController());
   Get.put(ApplicationController());
@@ -34,9 +34,9 @@ class MyApp extends StatelessWidget {
           secondary: Colors.white,
         ),
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF5F5F5), // Gigo dhexdhexaad ah oo khafiif ah
+        scaffoldBackgroundColor: Colors.white,
       ),
-      // Waddada bilowga ah waxaa loo dejiyay login
+      // Initial route set to login
       initialRoute: '/login',
       getPages: [
         GetPage(name: '/login', page: () => const LoginScreen()),

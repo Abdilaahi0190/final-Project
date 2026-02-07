@@ -12,7 +12,7 @@ class JobDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Isticmaal midabka rasmiga ah (Primary Purple)
+    // Use official primary color (Primary Purple)
     const Color primaryColor = Color(0xFF764ba2);
 
     return Scaffold(
